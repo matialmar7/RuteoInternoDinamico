@@ -1,0 +1,211 @@
+version: '2.1'
+
+services:
+  r1:
+    build: .
+    container_name: r1
+    volumes: #efectua un mapeo de ficheros local:container
+      - ./volumes/quagga/r1/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r1/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10011:2601
+      #ospf
+      - 10012:2604
+
+    networks:
+      veth1:
+        ipv4_address: 172.16.1.2
+      veth3:
+        ipv4_address: 172.16.3.2
+  r2:
+    build: .
+    container_name: r2
+    volumes:
+      - ./volumes/quagga/r2/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r2/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10021:2601
+      #ospf
+      - 10022:2604
+
+    networks:
+      veth1:
+        ipv4_address: 172.16.1.3
+      veth2:
+        ipv4_address: 172.16.2.2
+      veth9:
+        ipv4_address: 172.16.9.2
+
+  r3:
+    build: .
+    container_name: r3
+    volumes:
+      - ./volumes/quagga/r3/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r3/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10031:2601
+      #ospf
+      - 10032:2604
+
+    networks:
+      veth2:
+        ipv4_address: 172.16.2.3
+      veth3:
+        ipv4_address: 172.16.3.3
+      veth4:
+        ipv4_address: 172.16.4.3
+      veth6:
+        ipv4_address: 172.16.6.2
+  r4:
+    build: .
+    container_name: r4
+    volumes:
+      - ./volumes/quagga/r4/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r4/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10041:2601
+      #ospf
+      - 10042:2604
+
+    networks:
+      veth4:
+          ipv4_address: 172.16.4.2
+      veth5:
+          ipv4_address: 172.16.5.2
+      veth7:
+          ipv4_address: 172.16.7.2
+  r5:
+    build: .
+    container_name: r5
+    volumes:
+      - ./volumes/quagga/r5/zebra.conf:/etc/quagga/zebra.conf:ro
+      - ./volumes/quagga/r5/ospfd.conf:/etc/quagga/ospfd.conf:ro
+      - ./volumes/supervisord.conf:/etc/supervisord.conf:ro
+    image: ospf:20190321
+    privileged: true
+    ports:
+      #admin
+      - 10051:2601
+      #ospf
+      - 10052:2604
+
+    networks:
+      veth5:
+          ipv4_address: 172.16.5.3
+      veth6:
+          ipv4_address: 172.16.6.3
+      veth8:
+          ipv4_address: 172.16.8.2
+  h1:
+    image: alpine:latest
+    container_name: h1
+    privileged: true
+    command: top
+    networks:
+      veth9:
+        ipv4_address: 172.16.9.3
+  h2:
+    image: alpine:latest
+    container_name: h2
+    privileged: true
+    command: top   
+    networks:
+      veth9:
+        ipv4_address: 172.16.9.4
+  h3:
+    image: alpine:latest
+    container_name: h3
+    privileged: true
+    command: top
+    networks:
+      veth9:
+        ipv4_address: 172.16.9.5
+  h4:
+    image: alpine:latest
+    container_name: h4
+    privileged: true
+    command: top
+    networks:
+      veth7:
+        ipv4_address: 172.16.7.3
+  h5:
+    image: alpine:latest
+    container_name: h5
+    privileged: true
+    command: top
+    networks:
+      veth8:
+        ipv4_address: 172.16.8.3
+
+networks:
+  veth1:
+    driver: "bridge"
+    ipam: #IP Address Management
+      driver: default
+      config:
+        - subnet: 172.16.1.0/24
+  veth2:
+    driver: "bridge"
+    ipam: #IP Address Management
+      driver: default
+      config:
+        - subnet: 172.16.2.0/24
+  veth3:
+    driver: "bridge"
+    ipam: #IP Address Management
+      driver: default
+      config:
+        - subnet: 172.16.3.0/24
+  veth4:
+    driver: "bridge"
+    ipam: #IP Address Management
+      driver: default
+      config:
+        - subnet: 172.16.4.0/24
+  veth5:
+    driver: "bridge"
+    ipam: #IP Address Management
+      driver: default
+      config:
+        - subnet: 172.16.5.0/24
+  veth6:
+    driver: "bridge"
+    ipam: #IP Address Management
+      driver: default
+      config:
+        - subnet: 172.16.6.0/24
+  veth7:
+    driver: "bridge"
+    ipam: #IP Address Management
+      driver: default
+      config:
+        - subnet: 172.16.7.0/24
+  veth8:
+    driver: "bridge"
+    ipam: #IP Address Management
+      driver: default
+      config:
+        - subnet: 172.16.8.0/24
+  veth9:
+    driver: "bridge"
+    ipam: #IP Address Management
+      driver: default
+      config:
+        - subnet: 172.16.9.0/24
+
